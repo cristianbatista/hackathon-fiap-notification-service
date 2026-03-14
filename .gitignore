@@ -1,0 +1,60 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+.venv/
+venv/
+env/
+ENV/
+.python-version
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+.tox/
+*.prof
+
+# Environment / Secrets
+.env
+.env.*
+!.env.example
+!.env.compose.example
+
+# Docker
+.dockerignore
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+*.tmp
+
+# Go (projeto-base reference)
+*.exe
+*.test
+*.out
+vendor/
+
+# Alembic
+# (versions kept in git — not ignored)
+
+# Logs
+*.log
+
+# Node (tooling only)
+node_modules/
