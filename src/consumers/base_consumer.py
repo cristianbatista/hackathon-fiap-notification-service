@@ -2,7 +2,7 @@ import asyncio
 import json
 import logging
 from collections import defaultdict
-from collections.abc import Callable, Awaitable
+from collections.abc import Awaitable, Callable
 
 import aio_pika
 from aio_pika.abc import AbstractIncomingMessage
@@ -19,7 +19,9 @@ _retry_counts: dict[str, int] = defaultdict(int)
 MessageHandler = Callable[[str, str, str, str, str | None], Awaitable[None]]
 
 
-async def _connect_with_backoff(max_attempts: int = 10) -> aio_pika.abc.AbstractRobustConnection:
+async def _connect_with_backoff(
+    max_attempts: int = 10,
+) -> aio_pika.abc.AbstractRobustConnection:
     delay = 1.0
     for attempt in range(1, max_attempts + 1):
         try:
@@ -61,7 +63,6 @@ async def start_consumer(on_message: MessageHandler, stop_event: asyncio.Event) 
         queue = await channel.declare_queue(QUEUE_NAME, durable=True)
 
         async def _process(message: AbstractIncomingMessage) -> None:
-            delivery_tag = message.delivery_tag
             try:
                 body = json.loads(message.body.decode())
                 job_id = body["job_id"]
@@ -84,12 +85,14 @@ async def start_consumer(on_message: MessageHandler, stop_event: asyncio.Event) 
 
                 if attempts >= settings.max_notification_retries:
                     logger.error(
-                        json.dumps({
-                            "event": "notification_failed_permanently",
-                            "job_id": job_id,
-                            "attempts": attempts,
-                            "error": str(exc),
-                        })
+                        json.dumps(
+                            {
+                                "event": "notification_failed_permanently",
+                                "job_id": job_id,
+                                "attempts": attempts,
+                                "error": str(exc),
+                            }
+                        )
                     )
                     _retry_counts.pop(job_id, None)
                     await message.nack(requeue=False)

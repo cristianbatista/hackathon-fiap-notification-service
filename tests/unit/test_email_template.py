@@ -1,4 +1,5 @@
 """Unit tests for email templates (TDD — written before implementation)."""
+
 import pytest
 
 from src.core.template_renderer import TemplateNotFoundError, render_template

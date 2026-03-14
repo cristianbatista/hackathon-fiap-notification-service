@@ -1,5 +1,5 @@
 """Unit tests for retry logic in base_consumer (TDD — written before implementation)."""
-import asyncio
+
 import json
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -40,7 +40,7 @@ class TestRetryLogic:
             # Simulate 2 failures to exhaust retries
             for _ in range(2):
                 msg = _make_message(VALID_BODY)
-                # Directly call the internal _process logic by invoking consumer loop once
+                # Invoke the internal _process logic once per iteration
                 await _simulate_process(base_consumer, on_message, msg, mock_settings)
 
         # After max retries, last message should be nacked with requeue=False

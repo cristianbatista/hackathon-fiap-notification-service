@@ -1,5 +1,5 @@
 """Contract tests for the notifications consumer (T014)."""
-import asyncio
+
 import json
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -44,9 +44,15 @@ class TestConsumerContract:
         from src.services.notification_service import send_notification
 
         mock_send = AsyncMock()
-        with patch("src.services.notification_service.has_dedup_key", return_value=False):
-            with patch("src.services.notification_service.render_template", return_value="<h/>"):
-                with patch("src.services.notification_service.aiosmtplib.send", mock_send):
+        with patch(
+            "src.services.notification_service.has_dedup_key", return_value=False
+        ):
+            with patch(
+                "src.services.notification_service.render_template", return_value="<h/>"
+            ):
+                with patch(
+                    "src.services.notification_service.aiosmtplib.send", mock_send
+                ):
                     with patch("src.services.notification_service.set_dedup_key"):
                         await send_notification(
                             VALID_DONE["job_id"],
@@ -60,7 +66,9 @@ class TestConsumerContract:
         from src.services.notification_service import send_notification
 
         mock_send = AsyncMock()
-        with patch("src.services.notification_service.has_dedup_key", return_value=True):
+        with patch(
+            "src.services.notification_service.has_dedup_key", return_value=True
+        ):
             with patch("src.services.notification_service.aiosmtplib.send", mock_send):
                 await send_notification(
                     DUPLICATE["job_id"],
@@ -96,9 +104,15 @@ class TestConsumerContract:
         from src.services.notification_service import send_notification
 
         mock_send = AsyncMock()
-        with patch("src.services.notification_service.has_dedup_key", return_value=False):
-            with patch("src.services.notification_service.render_template", return_value="<h/>"):
-                with patch("src.services.notification_service.aiosmtplib.send", mock_send):
+        with patch(
+            "src.services.notification_service.has_dedup_key", return_value=False
+        ):
+            with patch(
+                "src.services.notification_service.render_template", return_value="<h/>"
+            ):
+                with patch(
+                    "src.services.notification_service.aiosmtplib.send", mock_send
+                ):
                     with patch("src.services.notification_service.set_dedup_key"):
                         await send_notification(
                             VALID_ERROR["job_id"],

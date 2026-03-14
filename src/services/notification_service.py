@@ -1,7 +1,7 @@
 """Notification service — deduplication, template rendering, SMTP sending."""
+
 import logging
 from email.message import EmailMessage
-from typing import Optional
 
 import aiosmtplib
 
@@ -21,7 +21,7 @@ async def send_notification(
     job_id: str,
     user_email: str,
     status: str,
-    error_message: Optional[str] = None,
+    error_message: str | None = None,
 ) -> None:
     """Send a notification email for the given job, if not already sent.
 
@@ -68,7 +68,9 @@ async def send_notification(
             extra={
                 "job_id": job_id,
                 "status": status,
-                "recipient_domain": user_email.split("@")[-1] if "@" in user_email else "unknown",
+                "recipient_domain": (
+                    user_email.split("@")[-1] if "@" in user_email else "unknown"
+                ),
                 "error": str(exc),
             },
         )
@@ -83,7 +85,9 @@ async def send_notification(
         extra={
             "job_id": job_id,
             "status": status,
-            "recipient_domain": user_email.split("@")[-1] if "@" in user_email else "unknown",
+            "recipient_domain": (
+                user_email.split("@")[-1] if "@" in user_email else "unknown"
+            ),
         },
     )
 

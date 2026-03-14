@@ -1,6 +1,6 @@
 """Unit tests for notification_service (TDD — written before implementation)."""
-import uuid
-from unittest.mock import AsyncMock, MagicMock, patch
+
+from unittest.mock import AsyncMock, patch
 
 import pytest
 
@@ -10,7 +10,7 @@ from src.core.metrics import notifications_deduplicated_total, notifications_sen
 class TestNotificationService:
     @pytest.mark.asyncio
     async def test_skips_send_when_duplicate(self):
-        from src.services.notification_service import EmailSendError, send_notification
+        from src.services.notification_service import send_notification
 
         with (
             patch("src.services.notification_service.has_dedup_key", return_value=True),
@@ -24,7 +24,9 @@ class TestNotificationService:
         from src.services.notification_service import send_notification
 
         before = notifications_deduplicated_total._value.get()
-        with patch("src.services.notification_service.has_dedup_key", return_value=True):
+        with patch(
+            "src.services.notification_service.has_dedup_key", return_value=True
+        ):
             await send_notification("job-dup", "user@example.com", "DONE")
         after = notifications_deduplicated_total._value.get()
         assert after > before
@@ -34,8 +36,13 @@ class TestNotificationService:
         from src.services.notification_service import EmailSendError, send_notification
 
         with (
-            patch("src.services.notification_service.has_dedup_key", return_value=False),
-            patch("src.services.notification_service.render_template", return_value="<html/>"),
+            patch(
+                "src.services.notification_service.has_dedup_key", return_value=False
+            ),
+            patch(
+                "src.services.notification_service.render_template",
+                return_value="<html/>",
+            ),
             patch(
                 "src.services.notification_service.aiosmtplib.send",
                 new_callable=AsyncMock,
@@ -50,8 +57,13 @@ class TestNotificationService:
         from src.services.notification_service import EmailSendError, send_notification
 
         with (
-            patch("src.services.notification_service.has_dedup_key", return_value=False),
-            patch("src.services.notification_service.render_template", return_value="<html/>"),
+            patch(
+                "src.services.notification_service.has_dedup_key", return_value=False
+            ),
+            patch(
+                "src.services.notification_service.render_template",
+                return_value="<html/>",
+            ),
             patch(
                 "src.services.notification_service.aiosmtplib.send",
                 new_callable=AsyncMock,
@@ -68,9 +80,17 @@ class TestNotificationService:
         from src.services.notification_service import send_notification
 
         with (
-            patch("src.services.notification_service.has_dedup_key", return_value=False),
-            patch("src.services.notification_service.render_template", return_value="<html/>"),
-            patch("src.services.notification_service.aiosmtplib.send", new_callable=AsyncMock),
+            patch(
+                "src.services.notification_service.has_dedup_key", return_value=False
+            ),
+            patch(
+                "src.services.notification_service.render_template",
+                return_value="<html/>",
+            ),
+            patch(
+                "src.services.notification_service.aiosmtplib.send",
+                new_callable=AsyncMock,
+            ),
             patch("src.services.notification_service.set_dedup_key") as mock_set,
         ):
             await send_notification("job-ok", "user@example.com", "DONE")
@@ -82,9 +102,17 @@ class TestNotificationService:
 
         before = notifications_sent_total.labels(status="success")._value.get()
         with (
-            patch("src.services.notification_service.has_dedup_key", return_value=False),
-            patch("src.services.notification_service.render_template", return_value="<html/>"),
-            patch("src.services.notification_service.aiosmtplib.send", new_callable=AsyncMock),
+            patch(
+                "src.services.notification_service.has_dedup_key", return_value=False
+            ),
+            patch(
+                "src.services.notification_service.render_template",
+                return_value="<html/>",
+            ),
+            patch(
+                "src.services.notification_service.aiosmtplib.send",
+                new_callable=AsyncMock,
+            ),
             patch("src.services.notification_service.set_dedup_key"),
         ):
             await send_notification("job-cnt", "user@example.com", "DONE")

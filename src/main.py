@@ -1,8 +1,8 @@
 """Entry point for the notification-service worker."""
+
 import asyncio
 import logging
 import signal
-from typing import Optional
 
 from src.consumers.base_consumer import start_consumer
 from src.core.config import settings
@@ -18,7 +18,7 @@ async def _on_message(
     user_id: str,  # noqa: ARG001
     user_email: str,
     status: str,
-    error_message: Optional[str],
+    error_message: str | None,
 ) -> None:
     """Bridge between the consumer and the notification service."""
     await send_notification(job_id, user_email, status, error_message)
